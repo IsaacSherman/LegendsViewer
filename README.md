@@ -4,7 +4,7 @@
 
 # Legends Viewer
 
-Recreates Legends Mode from exported data. Browser like navigation, including tabs, allows to easily view other people/places/entities by just clicking names in the event logs or search lists, CTRL+Click opens a new tab. 
+Recreates Legends Mode from exported data. Browser like navigation, including tabs, allows to easily view other people/places/entities by just clicking names in the event logs or search lists, CTRL+Click opens a new tab. This also adds a mode to export world maps into alternate tilesets.
 
 ## Getting the data from Dwarf Fortress:
 > :high_brightness: If you are already playing a fort or adventure on the save you want to use, you need to:
