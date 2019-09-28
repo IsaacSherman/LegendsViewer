@@ -39,6 +39,8 @@ namespace LegendsViewer.Controls.Map
         TrackBar _altMapTransparency = new TrackBar();
         float _altMapAlpha = 1.0f;
 
+  
+
         public MapPanel(Bitmap map, World world, DwarfTabControl dwarfTabControl, object focusObject)
         {
             TabControl = dwarfTabControl;
@@ -49,7 +51,7 @@ namespace LegendsViewer.Controls.Map
             {
                 FocusObject = null;
             }
-
+            
             _displayObjects = new List<object>();
             DoubleBuffered = true;
             Dock = DockStyle.Fill;
@@ -66,7 +68,7 @@ namespace LegendsViewer.Controls.Map
             {
                 Open = true
             };
-            _optionsMenu.AddOptions(new List<object> { "Load Alternate Map...", "Export Map...", "Overlays" });
+            _optionsMenu.AddOptions(new List<object> { "Load Alternate Map...", "Export Map...", "Overlays", "Launch Tileset Tool..." });
             MapMenu overlayOptions = new MapMenu(this);
             overlayOptions.AddOptions(new List<object> { "Battles", "Battles (Notable)", "Battle Deaths", "Beast Attacks", "Site Population...", "Site Events", "Site Events (Filtered)" });
             overlayOptions.Options.ForEach(option => option.OptionObject = "Overlay");
@@ -971,7 +973,7 @@ namespace LegendsViewer.Controls.Map
         public void MakeOverlay(string overlay)
         {
             List<Location> coordinatesList = new List<Location>();
-            List<int> occurences = new List<int>();
+            List<int> occurrences = new List<int>();
             _optionsMenu.Options.Single(option => option.Text == "Overlays").SubMenu.Options.ForEach(option => option.Toggled = false);
             _optionsMenu.Options.Single(option => option.Text == "Overlays").SubMenu.Options.Single(option => option.Text == overlay).Toggled = true;
             switch (overlay)
@@ -986,7 +988,7 @@ namespace LegendsViewer.Controls.Map
                     foreach (Location coordinates in _world.EventCollections.OfType<Battle>().GroupBy(battle => battle.Coordinates).Select(battle => battle.Key).ToList())
                     {
                         coordinatesList.Add(coordinates);
-                        occurences.Add(_world.EventCollections.OfType<Battle>().Where(battle => battle.Coordinates == coordinates).Sum(battle => battle.AttackerDeathCount + battle.DefenderDeathCount));
+                        occurrences.Add(_world.EventCollections.OfType<Battle>().Where(battle => battle.Coordinates == coordinates).Sum(battle => battle.AttackerDeathCount + battle.DefenderDeathCount));
                     }
                     break;
                 case "Site Population...":
@@ -1000,21 +1002,21 @@ namespace LegendsViewer.Controls.Map
                     foreach (Location coordinates in _world.Sites.GroupBy(site => site.Coordinates).Select(site => site.Key).ToList())
                     {
                         coordinatesList.Add(coordinates);
-                        occurences.Add(_world.Sites.Where(site => site.Coordinates == coordinates).Sum(site => site.Populations.Where(population => selectPopulations.SelectedPopulations.Contains(population.Race)).Sum(population => population.Count)));
+                        occurrences.Add(_world.Sites.Where(site => site.Coordinates == coordinates).Sum(site => site.Populations.Where(population => selectPopulations.SelectedPopulations.Contains(population.Race)).Sum(population => population.Count)));
                     }
                     break;
                 case "Site Events":
                     foreach (Location coordinates in _world.Sites.GroupBy(site => site.Coordinates).Select(site => site.Key).ToList())
                     {
                         coordinatesList.Add(coordinates);
-                        occurences.Add(_world.Sites.Where(site => site.Coordinates == coordinates).Sum(site => site.Events.Count()));
+                        occurrences.Add(_world.Sites.Where(site => site.Coordinates == coordinates).Sum(site => site.Events.Count()));
                     }
                     break;
                 case "Site Events (Filtered)":
                     foreach (Location coordinates in _world.Sites.GroupBy(site => site.Coordinates).Select(site => site.Key).ToList())
                     {
                         coordinatesList.Add(coordinates);
-                        occurences.Add(_world.Sites.Where(site => site.Coordinates == coordinates).Sum(site => site.Events.Count(dEvent => !Legends.Site.Filters.Contains(dEvent.Type))));
+                        occurrences.Add(_world.Sites.Where(site => site.Coordinates == coordinates).Sum(site => site.Events.Count(dEvent => !Legends.Site.Filters.Contains(dEvent.Type))));
                     }
                     break;
                 case "Beast Attacks":
@@ -1032,9 +1034,9 @@ namespace LegendsViewer.Controls.Map
                 Overlay.Dispose();
             }
 
-            if (occurences.Count > 0)
+            if (occurrences.Count > 0)
             {
-                Overlay = HeatMapMaker.Create(_map.Width, _map.Height, coordinatesList, occurences);
+                Overlay = HeatMapMaker.Create(_map.Width, _map.Height, coordinatesList, occurrences);
             }
             else
             {
